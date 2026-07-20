@@ -1,0 +1,44 @@
+<form method="POST">
+
+<label>Annual Income (k$)</label>
+
+<input
+type="number"
+name="income"
+required>
+
+<br><br>
+
+<label>Spending Score</label>
+
+<input
+type="number"
+name="spend"
+required>
+
+<br><br>
+
+<button type="submit">
+
+Find Customer Segment
+
+</button>
+
+</form>
+
+{% if result %}
+
+<hr>
+
+<h2>{{ result.name }}</h2>
+
+<p>{{ result.desc }}</p>
+
+<p>
+
+Cluster Number:
+<b>{{ result.cluster }}</b>
+
+</p>
+
+{% endif %}
