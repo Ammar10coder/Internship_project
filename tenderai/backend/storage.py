@@ -35,5 +35,5 @@ class Store:
     def history(self, decision: str):
         with self.connect() as db:
             rows = db.execute("""SELECT * FROM screenings WHERE ?='' OR decision=?
-                              ORDER BY id DESC LIMIT 100""", (decision, decision))
+                              ORDER BY id DESC""", (decision, decision))
             return [dict(row) for row in rows]
