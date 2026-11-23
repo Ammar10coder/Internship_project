@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TenderAI · Construction tender screening</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f3ec;color:#183c38;font:16px/1.55 "DM Sans",system-ui,sans-serif}main{max-width:950px;margin:auto;padding:6vh 5vw}header{border-bottom:2px solid #183c38;margin-bottom:28px}h1{font:600 clamp(42px,8vw,76px)/1 Georgia,serif;margin:0}h2{font:normal 26px Georgia,serif;margin:0 0 14px}.grid{display:grid;grid-template-columns:3fr 2fr;gap:18px}section{background:#fffef8;border:1px solid #c4cdc1;padding:24px;border-radius:12px}textarea,select,button{font:inherit}select,textarea{width:100%;padding:10px;border:1px solid #8b9b92;background:white;border-radius:6px;color:inherit}textarea{resize:vertical;min-height:125px}label{display:block;margin:12px 0 4px}button{margin-top:12px;padding:9px 18px;border:0;border-radius:6px;background:#155b50;color:white;cursor:pointer}#result{background:#e1eee2}strong{font-size:30px}#history{padding-left:22px}li{margin-bottom:8px;overflow-wrap:anywhere}@media(max-width:650px){.grid{grid-template-columns:1fr}}
+</style>
+<main><header><h1>TenderAI</h1><p>Screen construction tenders by category, priority and fit.</p></header>
+<div class="grid"><section><h2>Screen a tender</h2>
+<label for="sample">Try an example</label><select id="sample"><option value="">Choose a tender</option><option>Construction of Boundary Wall and Gate</option><option>Construction of Two class rooms for School</option><option>Annual Maintenance and Catering Services</option></select>
+<form id="form"><label for="description">Tender description</label><textarea id="description" required maxlength="12000" placeholder="Paste the scope of work here"></textarea><button>Screen tender</button></form></section>
+<section id="result" aria-live="polite"><h2>Screening result</h2><strong id="decision">Awaiting input</strong><p id="metrics"></p><p id="reason">Choose an example or enter a tender description.</p></section></div>
+<h2 style="margin-top:28px">Session history</h2><p id="empty">Your screened tenders will appear here.</p><ol id="history"></ol></main>
+<script>
+const rules = [
+  {category:"Boundary wall",priority:"P0",base:80,terms:["boundary wall","compound wall"],bonus:["construction","gate","precast"],weight:3.5},
+  {category:"Civil repair",priority:"P1",base:72,terms:["civil repair","road repair","structural repair"],bonus:["concrete","resurfacing"],weight:4},
+  {category:"Building construction",priority:"P2",base:65,terms:["classroom","class room","building construction","construction of building"],bonus:["construction","school","modular"],weight:4}
+];
+function screenTender(input) {
+  const words = input.toLowerCase().replace(/class\s*rooms\b/g,"classroom").replace(/boundary walls\b/g,"boundary wall").replace(/[^a-z0-9]+/g," ").trim();
+  const matches = term => (" "+words+" ").includes(" "+term+" ");
+  if (matches("catering")) return {decision:"NO-GO",category:"Outside scope",priority:"—",score:20,reason:"Catering triggers the exclusion rule, even when construction terms appear."};
+  for (const rule of rules) {
+    const match = rule.terms.find(matches);
+    if (!match) continue;
+    const bonuses = rule.bonus.filter(matches);
+    const score = Math.min(100,rule.base + bonuses.length * rule.weight);
+    return {decision:score >= 60 ? "GO":"NO-GO",category:rule.category,priority:rule.priority,score,
+      reason:"Matched “"+match+"”. Base "+rule.base+" points"+(bonuses.length?" + "+bonuses.length*rule.weight+" for "+bonuses.join(", "):"")+"."};
+  }
+  return {decision:"NO-GO",category:"Unclassified",priority:"—",score:30,reason:"No supported construction category matched."};
+}
+const byId = id => document.getElementById(id);
+const input = byId("description");
+byId("sample").onchange = event => {input.value = event.target.value; input.setCustomValidity("");};
+input.oninput = () => input.setCustomValidity("");
+byId("form").onsubmit = event => {
+  event.preventDefault();
+  if (!input.value.trim()) {input.setCustomValidity("Enter a tender description."); input.reportValidity(); return;}
+  const r = screenTender(input.value);
+  byId("decision").textContent = r.decision+" · "+r.score+"/100";
+  byId("metrics").textContent = r.category+" | Priority "+r.priority;
+  byId("reason").textContent = r.reason;
+  const entry = document.createElement("li");
+  entry.textContent = input.value.trim()+" — "+r.decision+" ("+r.score+"/100)";
+  byId("history").prepend(entry);
+  byId("empty").hidden = true;
+};
+</script></html>
