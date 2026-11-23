@@ -53,7 +53,8 @@ def parse(page):
 
 
 def cached():
-    return json.loads(CACHE.read_text()) if CACHE.exists() else {"rows": [], "updated": None}
+    source = CACHE if CACHE.exists() else CACHE.parents[1] / "samples" / "cppp-snapshot.json"
+    return json.loads(source.read_text()) if source.exists() else {"rows": [], "updated": None}
 
 
 def refresh():
