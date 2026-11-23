@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>TenderAI | Screening desk</title><link rel="stylesheet" href="/style.css"><script defer src="/app.js"></script></head>
+<body><main><header><h1>TenderAI</h1><p>Construction tender screening desk</p></header>
+<div class="columns"><section><h2>Screen a tender</h2><form id="screen">
+<label for="example">Load example</label><select id="example"><option value="">Choose a sample</option><option>Boundary wall and gate</option><option>School classrooms</option><option>Catering services</option></select>
+<label for="file">Import scope from PDF</label><input type="file" id="file" accept="application/pdf">
+<label for="title">Tender title</label><input id="title" maxlength="180" required>
+<label for="scope">Scope of work</label><textarea id="scope" rows="6" maxlength="20000" required></textarea>
+<button id="submit">Screen and save</button><p id="notice" role="status"></p></form></section>
+<section class="result" aria-live="polite"><h2>Decision summary</h2><strong id="decision">Awaiting tender</strong><p id="category"></p><p id="reason">Screen a scope of work or select a saved tender.</p></section></div>
+<section class="history"><h2>Saved screenings</h2><label for="filter">Filter by decision</label><select id="filter"><option value="">All decisions</option><option>GO</option><option>NO-GO</option></select><div id="records"></div></section></main></body></html>
