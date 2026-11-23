@@ -46,6 +46,19 @@ def create_app(database=None):
     def history(decision: Literal["", "GO", "NO-GO"] = ""):
         return app.state.store.history(decision)
 
+    from . import portal
+
+    @app.get("/api/portal")
+    def portal_cache():
+        return portal.cached()
+
+    @app.post("/api/portal/refresh")
+    def refresh_portal():
+        try:
+            return portal.refresh()
+        except (OSError, ValueError) as exc:
+            raise HTTPException(503, "CPPP could not be refreshed. Previous results are still available.") from exc
+
     app.mount("/", StaticFiles(directory=ROOT / "frontend", html=True))
     return app
 
