@@ -40,8 +40,12 @@ requirements.txt        Python dependencies
 2. Choose **School classrooms** and screen it. The category changes to Building construction (P2). Construction and school add eight points to the base of 65. Result: **73, GO**.
 3. Choose **Catering services**. Screening checks exclusions first, giving **20, NO-GO**. Filter the saved list to NO-GO, then refresh the page to show that records persist.
 
-The rules illustrate preliminary relevance for a construction team. Phrase matching can miss synonyms or misunderstand negation. Review the scope before making a bid decision. This version uses a plain JavaScript frontend and SQLite. It accepts English text and selectable-text PDFs up to 5 MB and 40 pages. Scanned pages require manual text entry. History displays the latest 100 matching records.
+The rules illustrate preliminary relevance for a construction team. Phrase matching can miss synonyms or misunderstand negation. Review the scope before making a bid decision. This version uses a plain JavaScript frontend and SQLite. It accepts English text and selectable-text PDFs up to 5 MB and 40 pages. Scanned pages require manual text entry. History displays all matching records.
 
 ## Verify
 
 Run `python -m unittest discover -s tests -v`. Tests use a temporary database. Visit `/docs` while the app is running to explore POST /api/extract, POST /api/tenders and GET /api/tenders.
+
+## Tender directory
+
+The home page now shows every saved screening, the most recent successful CPPP latest-listing snapshot and 13 labelled classroom examples from the reference screenshots. Search the cards or filter by source, state, organization, category and decision. Select a card for its details. **Screen PDF** opens the original workflow. **Refresh CPPP** fetches the public latest-listing table on demand. Portal availability and table format can vary. Coverage is limited to that table; missing procurement metadata is left blank. Screenshot scores are historical examples. The saved history includes all records.
